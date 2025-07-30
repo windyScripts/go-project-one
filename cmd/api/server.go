@@ -128,7 +128,7 @@ func main() {
 		Whitelist: []string{"sortBy","sortOrder","name","age","class"},
 	}
 
-	secureMux := mw.Hpp(hppOptions)(rl.Middleware(mw.Compression(mw.ReponseTimeMiddleware((mw.SecurityHeaders(mw.Cors(mux)))))))
+	secureMux := mw.Cors(rl.Middleware(mw.ReponseTimeMiddleware(mw.SecurityHeaders(mw.Compression(mw.Hpp(hppOptions)((mux)))))))
 
 	// create custom server
 	server := &http.Server{
