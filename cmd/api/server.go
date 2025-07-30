@@ -83,6 +83,15 @@ func teachersHandler(w http.ResponseWriter, r *http.Request){
 		case http.MethodGet:
 			w.Write([]byte("Hello GET method on Execs Route"))
 		case http.MethodPost:
+			fmt.Println("Query:", r.URL.Query())
+			fmt.Println("name", r.URL.Query().Get("name"))
+
+			//Parse form data (necessary for x-www-form-urlencoded)
+			err := r.ParseForm()
+			if err != nil {
+				return
+			}
+			fmt.Println("FORM from POST methods:", r.Form)
 			w.Write([]byte("Hello POST method on Execs Route"))
 		case http.MethodPatch:
 			w.Write([]byte("Hello PATCH method on Execs Route"))
@@ -121,11 +130,19 @@ func main() {
 
 	rl := mw.NewRateLimiter(5, time.Minute)
 
-	// create custom server
+	hppOptions := mw.HPPOptions{
+		CheckQuery: true,
+		CheckBody: true,
+		CheckBodyOnlyForContentType: "application/x-www-form-urlencoded",
+		Whitelist: []string{"sortBy","sortOrder","name","age","class"},
+	}
 
+	secureMux := mw.Hpp(hppOptions)(rl.Middleware(mw.Compression(mw.ReponseTimeMiddleware((mw.SecurityHeaders(mw.Cors(mux)))))))
+
+	// create custom server
 	server := &http.Server{
 		Addr:      port,
-		Handler: rl.Middleware(mw.Compression(mw.ReponseTimeMiddleware((mw.SecurityHeaders(mw.Cors(mux)))))),
+		Handler: secureMux,
 		TLSConfig: tlsConfig,
 	}
 
@@ -149,5 +166,12 @@ middleware for logging, auth, data validation, error handling.
 
 /* 
 Wrapping multiple middleware functions insde one another is called chaininng handlers
+*/
+
+/* 
+query parameters are depolluted automatically, only the first key value pair is stored.
+in body parameters, cleaning is not done automatically.
+hpp middleware handles this situation. It normalizes by removing duplicates, reducing ambiguity.
+
 */
 
