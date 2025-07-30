@@ -83,15 +83,6 @@ func teachersHandler(w http.ResponseWriter, r *http.Request){
 		case http.MethodGet:
 			w.Write([]byte("Hello GET method on Execs Route"))
 		case http.MethodPost:
-			fmt.Println("Query:", r.URL.Query())
-			fmt.Println("name", r.URL.Query().Get("name"))
-
-			//Parse form data (necessary for x-www-form-urlencoded)
-			err := r.ParseForm()
-			if err != nil {
-				return
-			}
-			fmt.Println("FORM from POST methods:", r.Form)
 			w.Write([]byte("Hello POST method on Execs Route"))
 		case http.MethodPatch:
 			w.Write([]byte("Hello PATCH method on Execs Route"))
