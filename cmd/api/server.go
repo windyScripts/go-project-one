@@ -19,7 +19,6 @@ type user struct {
 func rootHandler(w http.ResponseWriter, r *http.Request){
 		//fmt.Fprintf(w, "Hello Root Route")
 		w.Write([]byte("Hello Root Route"))
-		fmt.Println("Hello Root Route")
 	}
 
 func teachersHandler(w http.ResponseWriter, r *http.Request){
@@ -46,22 +45,16 @@ func teachersHandler(w http.ResponseWriter, r *http.Request){
 	switch r.Method{
 		case http.MethodGet:
 			w.Write([]byte("Hello GET method on teachers Route"))
-			fmt.Println("Hello GET method on teachers Route")
 		case http.MethodPost:
 			w.Write([]byte("Hello POST method on teachers Route"))
-			fmt.Println("Hello POST method on teachers Route")
 		case http.MethodPatch:
 			w.Write([]byte("Hello PATCH method on teachers Route"))
-			fmt.Println("Hello PATCH method on teachers Route")
 		case http.MethodPut:
 			w.Write([]byte("Hello PUT method on teachers Route"))
-			fmt.Println("Hello PUT method on teachers Route")
 		case http.MethodDelete:
 			w.Write([]byte("Hello DELETE method on teachers Route"))
-			fmt.Println("Hello DELETE method on teachers Route")
 		default:
 		w.Write([]byte("Hello teachers Route"))
-		fmt.Println("Hello teachers Route")
 		}
 	}
 
@@ -70,19 +63,14 @@ func teachersHandler(w http.ResponseWriter, r *http.Request){
 		switch r.Method{
 		case http.MethodGet:
 			w.Write([]byte("Hello GET method on Students Route"))
-			fmt.Println("Hello GET method on Students Route")
 		case http.MethodPost:
 			w.Write([]byte("Hello POST method on Students Route"))
-			fmt.Println("Hello POST method on Students Route")
 		case http.MethodPatch:
 			w.Write([]byte("Hello PATCH method on Students Route"))
-			fmt.Println("Hello PATCH method on Students Route")
 		case http.MethodPut:
 			w.Write([]byte("Hello PUT method on Students Route"))
-			fmt.Println("Hello PUT method on Students Route")
 		case http.MethodDelete:
 			w.Write([]byte("Hello DELETE method on Students Route"))
-			fmt.Println("Hello DELETE method on Students Route")
 		default:
 		w.Write([]byte("Hello Students Route"))
 		fmt.Println("Hello Students Route")
@@ -94,22 +82,16 @@ func teachersHandler(w http.ResponseWriter, r *http.Request){
 		switch r.Method{
 		case http.MethodGet:
 			w.Write([]byte("Hello GET method on Execs Route"))
-			fmt.Println("Hello GET method on Execs Route")
 		case http.MethodPost:
 			w.Write([]byte("Hello POST method on Execs Route"))
-			fmt.Println("Hello POST method on Execs Route")
 		case http.MethodPatch:
 			w.Write([]byte("Hello PATCH method on Execs Route"))
-			fmt.Println("Hello PATCH method on Execs Route")
 		case http.MethodPut:
 			w.Write([]byte("Hello PUT method on Execs Route"))
-			fmt.Println("Hello PUT method on Execs Route")
 		case http.MethodDelete:
 			w.Write([]byte("Hello DELETE method on Execs Route"))
-			fmt.Println("Hello DELETE method on Execs Route")
 		default:
-		w.Write([]byte("Hello teacExecshers Route"))
-		fmt.Println("Hello Execs Route")
+		w.Write([]byte("Hello Execs Route"))
 		}
 	}
 
