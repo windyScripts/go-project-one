@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	mw "restapi/internal/api/middlewares"
+	"time"
 )
 
 type user struct {
@@ -136,11 +137,13 @@ func main() {
 		MinVersion: tls.VersionTLS12,
 	}
 
+	rl := mw.NewRateLimiter(5, time.Minute)
+
 	// create custom server
 
 	server := &http.Server{
 		Addr:      port,
-		Handler: mw.Compression(mw.ReponseTimeMiddleware((mw.SecurityHeaders(mw.Cors(mux))))),
+		Handler: rl.Middleware(mw.Compression(mw.ReponseTimeMiddleware((mw.SecurityHeaders(mw.Cors(mux)))))),
 		TLSConfig: tlsConfig,
 	}
 
