@@ -2,14 +2,11 @@ package main
 
 import (
 	"crypto/tls"
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	mw "restapi/internal/api/middlewares"
-	"strconv"
-	"strings"
-	"sync"
+	"restapi/internal/api/router"
 )
 
 /* type user struct {
@@ -19,200 +16,13 @@ import (
 	City string `json:"city"`
 } */
 
-type Teacher struct {
-	ID        int    `json:"id,omitempty"`
-	FirstName string `json:"first_name,omitempty"`
-	LastName  string `json:"last_name,omitempty"`
-	Class     string `json:"class,omitempty"`
-	Subject   string `json:"subject,omitempty"`
-}
-
-var (
-	teachers = make(map[int]Teacher)
-	mutex    = &sync.Mutex{}
-	nextID   = 1
-)
-
-// Initialize some dummy data
-
-func init() {
-	teachers[nextID] = Teacher{
-		ID:        nextID,
-		FirstName: "John",
-		LastName:  "Doe",
-		Class:     "9A",
-		Subject:   "Math",
-	}
-	nextID++
-	teachers[nextID] = Teacher{
-		ID:        nextID,
-		FirstName: "Jane",
-		LastName:  "Smith",
-		Class:     "10A",
-		Subject:   "Algebra",
-	}
-	nextID++
-	teachers[nextID] = Teacher{
-		ID:        nextID,
-		FirstName: "Jane",
-		LastName:  "Doe",
-		Class:     "11C",
-		Subject:   "English",
-	}
-	nextID++
-}
-
-func rootHandler(w http.ResponseWriter, r *http.Request) {
-	//fmt.Fprintf(w, "Hello Root Route")
-	w.Write([]byte("Hello Root Route"))
-}
-
-func getTeachersHandler(w http.ResponseWriter, r *http.Request) {
-
-	path := strings.TrimPrefix(r.URL.Path, "/teachers/")
-	idStr := strings.TrimSuffix(path, "/")
-	fmt.Println(idStr)
-
-	if idStr == "" {
-		firstName := r.URL.Query().Get("first_name")
-		lastName := r.URL.Query().Get("last_name")
-		teacherList := make([]Teacher, 0, len(teachers))
-		for _, teacher := range teachers {
-			if (firstName == "" || teacher.FirstName == firstName) && (lastName == "" || teacher.LastName == lastName) {
-				teacherList = append(teacherList, teacher)
-			}
-
-		}
-		response := struct {
-			Status string    `json:"status"`
-			Count  int       `json:"count"`
-			Data   []Teacher `json:"data"`
-		}{
-			Status: "success",
-			Count:  len(teacherList),
-			Data:   teacherList,
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(response)
-	}
-
-	// Handle path param
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	teacher, exists := teachers[id]
-	if !exists {
-		http.Error(w, "Teacher not found", http.StatusNotFound)
-		return
-	}
-	json.NewEncoder(w).Encode(teacher)
-
-}
-
-func addTeacherHandler(w http.ResponseWriter, r *http.Request) {
-	mutex.Lock()
-	defer mutex.Unlock()
-
-	var newTeachers []Teacher
-	err := json.NewDecoder(r.Body).Decode(&newTeachers)
-	if err != nil {
-		http.Error(w, "Invalid Request Body", http.StatusBadRequest)
-		return
-	}
-	addedTeachers := make([]Teacher, len(newTeachers))
-	for i, newTeacher := range newTeachers {
-		newTeacher.ID = nextID
-		addedTeachers[i] = newTeacher
-		nextID++
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	response := struct {
-		Status string    `json:"status"`
-		Count  int       `json:"count"`
-		Data   []Teacher `json:"data"`
-	}{
-		Status: "success",
-		Count:  len(addedTeachers),
-		Data:   addedTeachers,
-	}
-
-	json.NewEncoder(w).Encode(response)
-}
-
-func teachersHandler(w http.ResponseWriter, r *http.Request) {
-
-	switch r.Method {
-	case http.MethodGet:
-		getTeachersHandler(w, r)
-	case http.MethodPost:
-		addTeacherHandler(w, r)
-	case http.MethodPatch:
-		w.Write([]byte("Hello PATCH method on teachers Route"))
-	case http.MethodPut:
-		w.Write([]byte("Hello PUT method on teachers Route"))
-	case http.MethodDelete:
-		w.Write([]byte("Hello DELETE method on teachers Route"))
-	default:
-		w.Write([]byte("Hello teachers Route"))
-	}
-}
-
-func studentsHandler(w http.ResponseWriter, r *http.Request) {
-	//fmt.Fprintf(w, "Hello Students Route")
-	switch r.Method {
-	case http.MethodGet:
-		w.Write([]byte("Hello GET method on Students Route"))
-	case http.MethodPost:
-		w.Write([]byte("Hello POST method on Students Route"))
-	case http.MethodPatch:
-		w.Write([]byte("Hello PATCH method on Students Route"))
-	case http.MethodPut:
-		w.Write([]byte("Hello PUT method on Students Route"))
-	case http.MethodDelete:
-		w.Write([]byte("Hello DELETE method on Students Route"))
-	default:
-		w.Write([]byte("Hello Students Route"))
-		fmt.Println("Hello Students Route")
-	}
-}
-
-func execsHandler(w http.ResponseWriter, r *http.Request) {
-	//fmt.Fprintf(w, "Hello execs Route")
-	switch r.Method {
-	case http.MethodGet:
-		w.Write([]byte("Hello GET method on Execs Route"))
-	case http.MethodPost:
-		w.Write([]byte("Hello POST method on Execs Route"))
-	case http.MethodPatch:
-		w.Write([]byte("Hello PATCH method on Execs Route"))
-	case http.MethodPut:
-		w.Write([]byte("Hello PUT method on Execs Route"))
-	case http.MethodDelete:
-		w.Write([]byte("Hello DELETE method on Execs Route"))
-	default:
-		w.Write([]byte("Hello Execs Route"))
-	}
-}
-
 func main() {
 	port := ":3000"
 
 	cert := "cert.pem"
 	key := "key.pem"
 
-	mux := http.NewServeMux()
-
-	mux.HandleFunc("/", rootHandler)
-
-	mux.HandleFunc("/teachers/", teachersHandler)
-
-	mux.HandleFunc("/students/", studentsHandler)
-
-	mux.HandleFunc("/execs/", execsHandler)
+	router := router.Router()
 
 	tlsConfig := &tls.Config{
 		MinVersion: tls.VersionTLS12,
@@ -228,8 +38,8 @@ func main() {
 	// }
 
 	//secureMux := mw.Cors(rl.Middleware(mw.ReponseTimeMiddleware(mw.SecurityHeaders(mw.Compression(mw.Hpp(hppOptions)((mux)))))))
-	//secureMux := applyMiddlewares(mux, mw.Hpp(hppOptions), mw.Compression, mw.SecurityHeaders, mw.ReponseTimeMiddleware, rl.Middleware, mw.Cors)
-	secureMux := mw.SecurityHeaders(mux) // sidestepping middlewares for testing
+	//secureMux := utils.ApplyMiddlewares(mux, mw.Hpp(hppOptions), mw.Compression, mw.SecurityHeaders, mw.ReponseTimeMiddleware, rl.Middleware, mw.Cors)
+	secureMux := mw.SecurityHeaders(router) // sidestepping middlewares for testing
 
 	// create custom server
 	server := &http.Server{
@@ -243,16 +53,6 @@ func main() {
 	if err != nil {
 		log.Fatalln("Error starting server", err)
 	}
-}
-
-// Middleware is a function that wraps an http.Handler with additional functionality
-type Middleware func(http.Handler) http.Handler
-
-func applyMiddlewares(handler http.Handler, middlewares ...Middleware) http.Handler {
-	for _, middleware := range middlewares {
-		handler = middleware(handler)
-	}
-	return handler
 }
 
 /*
