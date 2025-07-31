@@ -120,6 +120,7 @@ func addTeacherHandler(w http.ResponseWriter, r *http.Request) {
 	addedTeachers := make([]models.Teacher, len(newTeachers))
 	for i, newTeacher := range newTeachers {
 		newTeacher.ID = nextID
+		teachers[i] = newTeacher
 		addedTeachers[i] = newTeacher
 		nextID++
 	}
