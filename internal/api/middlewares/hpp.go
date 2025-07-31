@@ -7,17 +7,17 @@ import (
 )
 
 type HPPOptions struct {
-	CheckQuery bool
-	CheckBody bool
+	CheckQuery                  bool
+	CheckBody                   bool
 	CheckBodyOnlyForContentType string
 	//list of accepted parameters
 	Whitelist []string
 }
 
-func Hpp(options HPPOptions) func (http.Handler) http.Handler {
-	return func (next http.Handler) http.Handler {
+func Hpp(options HPPOptions) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			if options.CheckBody && r.Method == http.MethodPost && isCorrectContentType(r, options.CheckBodyOnlyForContentType){
+			if options.CheckBody && r.Method == http.MethodPost && isCorrectContentType(r, options.CheckBodyOnlyForContentType) {
 				// filter body params
 				filterBodyParams(r, options.Whitelist)
 			}
@@ -25,16 +25,16 @@ func Hpp(options HPPOptions) func (http.Handler) http.Handler {
 				// filter query params
 				filterQueryParams(r, options.Whitelist)
 			}
-			next.ServeHTTP(w,r)
+			next.ServeHTTP(w, r)
 		})
 	}
 }
 
-func isCorrectContentType(r *http.Request, contentType string) bool{
-	return strings.Contains(r.Header.Get("Content-Type"),contentType)
+func isCorrectContentType(r *http.Request, contentType string) bool {
+	return strings.Contains(r.Header.Get("Content-Type"), contentType)
 }
 
-func filterBodyParams(r *http.Request, whitelist []string){
+func filterBodyParams(r *http.Request, whitelist []string) {
 	err := r.ParseForm()
 	if err != nil {
 		fmt.Println(err)
@@ -43,33 +43,33 @@ func filterBodyParams(r *http.Request, whitelist []string){
 
 	for k, v := range r.Form {
 		if len(v) > 1 {
-			r.Form.Set(k,v[0]) // first value
+			r.Form.Set(k, v[0]) // first value
 			// r.Form.Set(k, v[len(v)-1]) // last value
 		}
-		if !isWhiteListed(k, whitelist){
-			delete(r.Form,k)
+		if !isWhiteListed(k, whitelist) {
+			delete(r.Form, k)
 		}
 	}
 }
 
-func filterQueryParams(r *http.Request, whitelist []string){
+func filterQueryParams(r *http.Request, whitelist []string) {
 	query := r.URL.Query()
 
 	for k, v := range query {
 		if len(v) > 1 {
-			query.Set(k,v[0]) // first value
+			query.Set(k, v[0]) // first value
 			// query.Set(k, v[len(v)-1]) // last value
 		}
-		if !isWhiteListed(k, whitelist){
+		if !isWhiteListed(k, whitelist) {
 			query.Del(k)
 		}
 	}
 	r.URL.RawQuery = query.Encode()
 }
 
-func isWhiteListed(param string, whitelist []string) bool{
-	for _, v := range whitelist{
-		if param == v{
+func isWhiteListed(param string, whitelist []string) bool {
+	for _, v := range whitelist {
+		if param == v {
 			return true
 		}
 	}

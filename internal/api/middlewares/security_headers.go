@@ -3,40 +3,39 @@ package middlewares
 import "net/http"
 
 func SecurityHeaders(next http.Handler) http.Handler {
-	return http.HandlerFunc( func(w http.ResponseWriter, r *http.Request){
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("X-DNS-Prefetch-Control", "off")
 		w.Header().Set("X-Frame-Options", "DENY")
 		w.Header().Set("X-XSS-Protection", "1; mode=block")
 		w.Header().Set("X-Content-Type-Options", "nosniff")
 		w.Header().Set("Strict Transport Security", "max-age=63072000; includeSubDomains;preload")
-		w.Header().Set("Content-Security-Policy", "default-src 'self'" )
+		w.Header().Set("Content-Security-Policy", "default-src 'self'")
 		w.Header().Set("Referrer-Policy", "no-referrer")
 		w.Header().Set("X-Powered-By", "Django") // Puts people on the wrong path regarding tech used.
-		
+
 		//Explore these
-		w.Header().Set("Server","")
-		w.Header().Set("X-Permitted-Cross-Domain-Policies","none")
-		w.Header().Set("Cache-Control","no-store, no-cache, must-revalidate, max-age=0")
-		w.Header().Set("Cross-Origin-Resource-Policy","same-origin")
-		w.Header().Set("Cross-Origin-Opener-Policy","same-origin")
-		w.Header().Set("Cross-Origin-Embedder-Policy","require-corp")
-		
-		w.Header().Set("Permissions-Policy","geolocation=(self), microphone=()")
-		
+		w.Header().Set("Server", "")
+		w.Header().Set("X-Permitted-Cross-Domain-Policies", "none")
+		w.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
+		w.Header().Set("Cross-Origin-Resource-Policy", "same-origin")
+		w.Header().Set("Cross-Origin-Opener-Policy", "same-origin")
+		w.Header().Set("Cross-Origin-Embedder-Policy", "require-corp")
+
+		w.Header().Set("Permissions-Policy", "geolocation=(self), microphone=()")
+
 		next.ServeHTTP(w, r)
 	})
 }
 
-
 // basic middleware format
-/* 
+/*
 
 func securityHeaders(next http.Handler) http.Handler {
 	return http.HandlerFunc( func(w http.ResponseWriter, r *http.Request){})
 }
 
 */
-/* 
+/*
 
 dns prefetching is a technique used to resolve domain names before they are needed, reducing latency when the browser needs to connect to those domains. Turning it off reduces risk of dns based attacks.
 X-Frame_Options is a security header that prevents clickjacking attacks by controlling whether a page can be displayed in a frame or iframe.
@@ -48,7 +47,7 @@ Referrer-Policy is a security header that controls how much referrer information
 
 */
 
-/* 
+/*
 space for additional security headers
 Server header is used to identify the software used by the server. Setting it to an empty string can help obscure the technology stack, making it harder for attackers to target specific vulnerabilities.
 X-Permitted-Cross-Domain-Policies is a security header that controls how cross-domain policies are handled, preventing unauthorized access to resources.
