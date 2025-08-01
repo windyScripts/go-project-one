@@ -19,12 +19,11 @@ import (
 
 func main() {
 
-	_, err  := sqlconnect.ConnectDb("test_database")
+	_, err := sqlconnect.ConnectDb()
 	if err != nil {
-		fmt.Println("Error connecting DB: ",err)
+		fmt.Println("Error connecting DB: ", err)
 		return
 	}
-
 
 	port := ":3000"
 
@@ -86,7 +85,7 @@ hpp middleware handles this situation. It normalizes by removing duplicates, red
 
 */
 
-/* 
+/*
 Mariadb is used.
 insert into table (v1, v2) values("v1","v2"),("v3","v4")
 update table set value = condition where check = condition
@@ -99,4 +98,3 @@ done by creating db, copying tables, delete old database.
 drop table my_table
 drop database test_database
 */
-

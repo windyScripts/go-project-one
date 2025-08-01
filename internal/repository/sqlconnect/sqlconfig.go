@@ -3,15 +3,31 @@ package sqlconnect
 import (
 	"database/sql"
 	"fmt"
+	"os"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/joho/godotenv"
 )
 
-func ConnectDb(dbname string) (*sql.DB, error){
+func ConnectDb() (*sql.DB, error) {
 
-	connectionString := "db_user:your_password@tcp(127.0.0.1:3306)/" + dbname
+	fmt.Println("Trying to connect MariaDB")
+	err := godotenv.Load()
+	if err != nil {
+		return nil, err
+	}
+
+	user := os.Getenv("DB_USER")
+	password := os.Getenv("DB_PASSWORD")
+	dbname := os.Getenv("DB_NAME")
+	dbport := os.Getenv("DB_PORT")
+	host := os.Getenv("HOST")
+
+	//connectionString := "db_user:your_password@tcp(127.0.0.1:3306)/" + dbname
+	connectionString := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", user, password, host, dbport, dbname)
+
 	db, err := sql.Open("mysql", connectionString)
-	if err != nil{
+	if err != nil {
 		//panic(err)
 		return nil, err
 	}
@@ -20,4 +36,3 @@ func ConnectDb(dbname string) (*sql.DB, error){
 }
 
 //create a limited access user that can only access the single db.
-
