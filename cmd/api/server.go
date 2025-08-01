@@ -76,3 +76,18 @@ in body parameters, cleaning is not done automatically.
 hpp middleware handles this situation. It normalizes by removing duplicates, reducing ambiguity.
 
 */
+
+/* 
+Mariadb is used.
+insert into table (v1, v2) values("v1","v2"),("v3","v4")
+update table set value = condition where check = condition
+delete from my_table where condition
+rename table my_table my_new_table
+
+renaming database in maria and mysql doesn't work by using rename database.
+done by creating db, copying tables, delete old database.
+
+drop table my_table
+drop database test_database
+*/
+
