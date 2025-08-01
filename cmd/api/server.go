@@ -5,9 +5,12 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	mw "restapi/internal/api/middlewares"
 	"restapi/internal/api/router"
 	"restapi/internal/repository/sqlconnect"
+
+	"github.com/joho/godotenv"
 )
 
 /* type user struct {
@@ -19,13 +22,19 @@ import (
 
 func main() {
 
-	_, err := sqlconnect.ConnectDb()
+	err := godotenv.Load()
 	if err != nil {
-		fmt.Println("Error connecting DB: ", err)
 		return
 	}
 
-	port := ":3000"
+
+	_, err2 := sqlconnect.ConnectDb()
+	if err2 != nil {
+		fmt.Println("Error connecting DB: ", err2)
+		return
+	}
+
+	port := os.Getenv("API_PORT")
 
 	cert := "cert.pem"
 	key := "key.pem"
