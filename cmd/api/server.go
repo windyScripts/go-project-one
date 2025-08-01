@@ -7,6 +7,7 @@ import (
 	"net/http"
 	mw "restapi/internal/api/middlewares"
 	"restapi/internal/api/router"
+	"restapi/internal/repository/sqlconnect"
 )
 
 /* type user struct {
@@ -17,6 +18,14 @@ import (
 } */
 
 func main() {
+
+	_, err  := sqlconnect.ConnectDb("test_database")
+	if err != nil {
+		fmt.Println("Error connecting DB: ",err)
+		return
+	}
+
+
 	port := ":3000"
 
 	cert := "cert.pem"
@@ -49,9 +58,9 @@ func main() {
 	}
 
 	fmt.Println("Server is running on port: ", port)
-	err := server.ListenAndServeTLS(cert, key)
-	if err != nil {
-		log.Fatalln("Error starting server", err)
+	err1 := server.ListenAndServeTLS(cert, key)
+	if err1 != nil {
+		log.Fatalln("Error starting server", err1)
 	}
 }
 
