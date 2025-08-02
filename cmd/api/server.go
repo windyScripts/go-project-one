@@ -27,7 +27,6 @@ func main() {
 		return
 	}
 
-
 	_, err2 := sqlconnect.ConnectDb()
 	if err2 != nil {
 		fmt.Println("Error connecting DB: ", err2)
