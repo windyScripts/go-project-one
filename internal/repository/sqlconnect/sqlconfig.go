@@ -35,3 +35,19 @@ func ConnectDb() (*sql.DB, error) {
 }
 
 //create a limited access user that can only access the single db.
+
+//table creation:
+/* 
+create database if not exists school
+use school
+create table if not exists teachers(
+id int auto_increment primary key,
+first_name varchar(255) not null,
+last_name varchar(255) not null,
+email varchar(255) unique not null,
+class varchar(255) not null,
+subject varchar(255) not null,
+Index (email)
+) auto_increment=100;
+ */
+
