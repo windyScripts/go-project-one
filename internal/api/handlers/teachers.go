@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -66,19 +67,52 @@ func TeachersHandler(w http.ResponseWriter, r *http.Request) {
 
 func getTeachersHandler(w http.ResponseWriter, r *http.Request) {
 
+	db, err1 := sqlconnect.ConnectDb()
+	if err1 != nil {
+		http.Error(w, "Error connecting to database", http.StatusInternalServerError)
+		return
+	}
+	defer db.Close()
+
 	path := strings.TrimPrefix(r.URL.Path, "/teachers/")
 	idStr := strings.TrimSuffix(path, "/")
 
 	if idStr == "" {
 		firstName := r.URL.Query().Get("first_name")
 		lastName := r.URL.Query().Get("last_name")
-		teacherList := make([]models.Teacher, 0, len(teachers))
-		for _, teacher := range teachers {
-			if (firstName == "" || teacher.FirstName == firstName) && (lastName == "" || teacher.LastName == lastName) {
-				teacherList = append(teacherList, teacher)
-			}
+		
+		query := "SELECT id, first_name, last_name, email, class, subject FROM teachers WHERE 1=1"
+		var args []interface{}
 
+		if firstName != ""{
+			query+=" AND first_name = ?"
+			args = append(args, firstName)
 		}
+				if lastName != ""{
+			query+=" AND last_name = ?"
+			args = append(args, lastName)
+		}
+		
+		rows, err := db.Query(query, args...)
+		if err != nil {
+			fmt.Println(err)
+			http.Error(w, "Database query error", http.StatusInternalServerError)
+			return
+		}
+		defer rows.Close()
+
+		teacherList := make([]models.Teacher, 0)
+		
+		for rows.Next(){
+			var teacher models.Teacher
+			err := rows.Scan(&teacher.ID,&teacher.FirstName,&teacher.LastName,&teacher.Email,&teacher.Class,&teacher.Subject)
+			if err != nil {
+				http.Error(w, "Error scanning database results", http.StatusInternalServerError)
+				return
+			}
+			teacherList = append(teacherList, teacher)
+		}
+
 		response := struct {
 			Status string           `json:"status"`
 			Count  int              `json:"count"`
@@ -99,11 +133,15 @@ func getTeachersHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		return
 	}
-	teacher, exists := teachers[id]
-	if !exists {
-		http.Error(w, "Teacher not found", http.StatusNotFound)
-		return
+	var teacher models.Teacher
+	err = db.QueryRow("SELECT id, first_name, last_name, email, class, subject FROM teachers WHERE id = ?",id).Scan(&teacher.ID,&teacher.FirstName,&teacher.LastName,&teacher.Email,&teacher.Class,&teacher.Subject)
+	if err == sql.ErrNoRows {
+		http.Error(w,"Teacher not found", http.StatusNotFound)
+	} else if err != nil{
+		http.Error(w, "Database query error", http.StatusInternalServerError)
 	}
+	
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(teacher)
 
 }
