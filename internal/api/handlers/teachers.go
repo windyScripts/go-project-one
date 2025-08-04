@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"restapi/internal/models"
 	"restapi/internal/repository/sqlconnect"
@@ -21,7 +22,7 @@ func TeachersHandler(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPatch:
 		w.Write([]byte("Hello PATCH method on teachers Route"))
 	case http.MethodPut:
-		w.Write([]byte("Hello PUT method on teachers Route"))
+		updateTeacherHandler(w, r)
 	case http.MethodDelete:
 		w.Write([]byte("Hello DELETE method on teachers Route"))
 	default:
@@ -210,4 +211,56 @@ func addTeacherHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(response)
+}
+
+// PUT /teachers/{id}
+func updateTeacherHandler(w http.ResponseWriter, r *http.Request) {
+	idStr := strings.TrimPrefix(r.URL.Path, "/teachers/")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Invalid teacher id", http.StatusBadRequest)
+		return
+	}
+
+	var updatedTeacher models.Teacher
+	err = json.NewDecoder(r.Body).Decode(&updatedTeacher)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		return
+	}
+
+	db, err := sqlconnect.ConnectDb()
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Unable to connect to database", http.StatusInternalServerError)
+		return
+	}
+
+	defer db.Close()
+
+	var existingTeacher models.Teacher
+	err = db.QueryRow("SELECT id, first_name, last_name, email, class, subject FROM teachers where id = ?", id).Scan(&existingTeacher.ID, &existingTeacher.FirstName, &existingTeacher.LastName, &existingTeacher.Email, &existingTeacher.Class, &existingTeacher.Subject)
+	if err == sql.ErrNoRows {
+		log.Println(err)
+		http.Error(w, "Unable to find teacher in DB", http.StatusNotFound)
+		return
+	}
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Unable to retrieve data.", http.StatusInternalServerError)
+		return
+	}
+
+	updatedTeacher.ID = existingTeacher.ID
+	_, err = db.Exec("UPDATE teachers SET first_name = ?, last_name = ?, email = ?, class = ?, subject = ? WHERE id = ?", updatedTeacher.FirstName, updatedTeacher.LastName, updatedTeacher.Email, updatedTeacher.Class, updatedTeacher.Subject, updatedTeacher.ID)
+	if err != nil {
+		http.Error(w, "Error updating teacher.", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(updatedTeacher)
+
 }
