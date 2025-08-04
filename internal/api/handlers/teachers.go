@@ -9,43 +9,7 @@ import (
 	"restapi/internal/repository/sqlconnect"
 	"strconv"
 	"strings"
-	"sync"
 )
-
-var (
-	teachers = make(map[int]models.Teacher)
-	mutex    = &sync.Mutex{}
-	nextID   = 1
-)
-
-// Initialize some dummy data
-
-func init() {
-	teachers[nextID] = models.Teacher{
-		ID:        nextID,
-		FirstName: "John",
-		LastName:  "Doe",
-		Class:     "9A",
-		Subject:   "Math",
-	}
-	nextID++
-	teachers[nextID] = models.Teacher{
-		ID:        nextID,
-		FirstName: "Jane",
-		LastName:  "Smith",
-		Class:     "10A",
-		Subject:   "Algebra",
-	}
-	nextID++
-	teachers[nextID] = models.Teacher{
-		ID:        nextID,
-		FirstName: "Jane",
-		LastName:  "Doe",
-		Class:     "11C",
-		Subject:   "English",
-	}
-	nextID++
-}
 
 func TeachersHandler(w http.ResponseWriter, r *http.Request) {
 
@@ -65,6 +29,21 @@ func TeachersHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func isValidSortOrder(order string) bool {
+	return order == "asc" || order == "desc"
+}
+
+func isValidSortField(field string) bool {
+	validFields := map[string]bool{
+		"first_name": true,
+		"last_name":  true,
+		"email":      true,
+		"class":      true,
+		"subject":    true,
+	}
+	return validFields[field]
+}
+
 func getTeachersHandler(w http.ResponseWriter, r *http.Request) {
 
 	db, err1 := sqlconnect.ConnectDb()
@@ -78,12 +57,14 @@ func getTeachersHandler(w http.ResponseWriter, r *http.Request) {
 	idStr := strings.TrimSuffix(path, "/")
 
 	if idStr == "" {
-		
+
 		query := "SELECT id, first_name, last_name, email, class, subject FROM teachers WHERE 1=1"
 		var args []interface{}
 
 		query, args = addFilters(r, query, args)
-		
+
+		query = addSorting(r, query)
+
 		rows, err := db.Query(query, args...)
 		if err != nil {
 			fmt.Println(err)
@@ -93,10 +74,10 @@ func getTeachersHandler(w http.ResponseWriter, r *http.Request) {
 		defer rows.Close()
 
 		teacherList := make([]models.Teacher, 0)
-		
-		for rows.Next(){
+
+		for rows.Next() {
 			var teacher models.Teacher
-			err := rows.Scan(&teacher.ID,&teacher.FirstName,&teacher.LastName,&teacher.Email,&teacher.Class,&teacher.Subject)
+			err := rows.Scan(&teacher.ID, &teacher.FirstName, &teacher.LastName, &teacher.Email, &teacher.Class, &teacher.Subject)
 			if err != nil {
 				http.Error(w, "Error scanning database results", http.StatusInternalServerError)
 				return
@@ -125,16 +106,38 @@ func getTeachersHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var teacher models.Teacher
-	err = db.QueryRow("SELECT id, first_name, last_name, email, class, subject FROM teachers WHERE id = ?",id).Scan(&teacher.ID,&teacher.FirstName,&teacher.LastName,&teacher.Email,&teacher.Class,&teacher.Subject)
+	err = db.QueryRow("SELECT id, first_name, last_name, email, class, subject FROM teachers WHERE id = ?", id).Scan(&teacher.ID, &teacher.FirstName, &teacher.LastName, &teacher.Email, &teacher.Class, &teacher.Subject)
 	if err == sql.ErrNoRows {
-		http.Error(w,"Teacher not found", http.StatusNotFound)
-	} else if err != nil{
+		http.Error(w, "Teacher not found", http.StatusNotFound)
+	} else if err != nil {
 		http.Error(w, "Database query error", http.StatusInternalServerError)
 	}
-	
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(teacher)
 
+}
+
+func addSorting(r *http.Request, query string) string {
+	sortParams := r.URL.Query()["sortby"] // square brackets allows you to get all key value pairs rather than just the first.
+	if len(sortParams) > 0 {
+		query += " ORDER BY "
+		for i, param := range sortParams {
+			parts := strings.Split(param, ":")
+			if len(parts) != 2 {
+				continue
+			}
+			field, order := parts[0], parts[1]
+			if !isValidSortOrder(order) || !isValidSortField(field) {
+				continue
+			}
+			if i > 0 {
+				query += ","
+			}
+			query += " " + field + " " + order
+		}
+	}
+	return query
 }
 
 func addFilters(r *http.Request, query string, args []interface{}) (string, []interface{}) {
