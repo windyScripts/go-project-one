@@ -23,7 +23,7 @@ func TeachersHandler(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPut:
 		updateTeacherHandler(w, r)
 	case http.MethodPatch:
-		pathTeachersHandler(w, r)
+		patchTeachersHandler(w, r)
 	case http.MethodDelete:
 		w.Write([]byte("Hello DELETE method on teachers Route"))
 	default:
@@ -267,7 +267,7 @@ func updateTeacherHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // PATCH /teachers/{id}
-func pathTeachersHandler(w http.ResponseWriter, r *http.Request) {
+func patchTeachersHandler(w http.ResponseWriter, r *http.Request) {
 	idStr := strings.TrimPrefix(r.URL.Path, "/teachers/")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
