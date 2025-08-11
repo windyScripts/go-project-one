@@ -23,7 +23,7 @@ func GetTeacherHandler(w http.ResponseWriter, r *http.Request) {
 
 	teacher, err := sqlconnect.GetTeacherByID(id)
 	if err != nil {
-		http.Error(w,err.Error(), http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -37,7 +37,7 @@ func GetTeachersHandler(w http.ResponseWriter, r *http.Request) {
 	var teachers []models.Teacher
 	teachers, err := sqlconnect.GetTeachersDbHandler(teachers, r)
 	if err != nil {
-		http.Error(w,err.Error(), http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -64,7 +64,7 @@ func AddTeacherHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid Request Body", http.StatusBadRequest)
 		return
 	}
-	
+
 	addedTeachers, err := sqlconnect.AddTeachersDbHandler(newTeachers)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -103,7 +103,7 @@ func UpdateTeacherHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
-	
+
 	updatedTeacherFromDB, err := sqlconnect.UpdateDbTeacher(id, updatedTeacher)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -132,7 +132,7 @@ func PatchTeacherHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
-	
+
 	updatedTeacher, err := sqlconnect.PatchTeacherDB(id, updates)
 	if err != nil {
 		log.Println(err)
@@ -152,7 +152,7 @@ func PatchTeachersHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
-	
+
 	err = sqlconnect.PatchTeachersDB(updates)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -170,7 +170,7 @@ func DeleteTeacherHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid teacher id", http.StatusBadRequest)
 		return
 	}
-	
+
 	err = sqlconnect.DeleteTeacherDB(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -198,7 +198,7 @@ func DeleteTeachersHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
-	
+
 	deletedIds, err := sqlconnect.DeleteTeachersDB(ids)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
