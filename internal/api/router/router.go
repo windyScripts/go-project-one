@@ -12,10 +12,10 @@ func Router() *http.ServeMux {
 	mux.HandleFunc("/", handlers.RootHandler)
 
 	// single space between method and endpoint.
-	mux.HandleFunc("GET /teachers/", handlers.GetTeachersHandler)
-	mux.HandleFunc("POST /teachers/", handlers.AddTeacherHandler)
-	mux.HandleFunc("PATCH /teachers/", handlers.PatchTeachersHandler)
-	mux.HandleFunc("DELETE /teachers/", handlers.DeleteTeachersHandler)
+	mux.HandleFunc("GET /teachers", handlers.GetTeachersHandler)
+	mux.HandleFunc("POST /teachers", handlers.AddTeacherHandler)
+	mux.HandleFunc("PATCH /teachers", handlers.PatchTeachersHandler)
+	mux.HandleFunc("DELETE /teachers", handlers.DeleteTeachersHandler)
 
 	mux.HandleFunc("GET /teachers/{id}", handlers.GetTeacherHandler)
 	mux.HandleFunc("PUT /teachers/{id}", handlers.UpdateTeacherHandler)
