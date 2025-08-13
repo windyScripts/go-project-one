@@ -27,9 +27,9 @@ func main() {
 		return
 	}
 
-	_, err2 := sqlconnect.ConnectDb()
-	if err2 != nil {
-		fmt.Println("Error connecting DB: ", err2)
+	_, err = sqlconnect.ConnectDb()
+	if err != nil {
+		fmt.Println("Error connecting DB: ", err)
 		return
 	}
 
@@ -65,9 +65,9 @@ func main() {
 	}
 
 	fmt.Println("Server is running on port: ", port)
-	err1 := server.ListenAndServeTLS(cert, key)
-	if err1 != nil {
-		log.Fatalln("Error starting server", err1)
+	err = server.ListenAndServeTLS(cert, key)
+	if err != nil {
+		log.Fatalln("Error starting server", err)
 	}
 }
 

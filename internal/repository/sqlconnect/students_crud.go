@@ -9,6 +9,7 @@ import (
 	"restapi/internal/models"
 	"restapi/pkg/utils"
 	"strconv"
+	"strings"
 )
 
 func GetStudentByID(id int) (models.Student, error) {
@@ -82,6 +83,9 @@ func AddStudentsDbHandler(newStudents []models.Student) ([]models.Student, error
 		values := utils.GetStructValues(newStudent)
 		res, err := stmt.Exec(values...)
 		if err != nil {
+			if strings.Contains(err.Error(), "a foreign key constraint fails (`school`.`students`, CONSTRAINT `students_ibfk_1` FOREIGN KEY (`class`) REFERENCES `teachers` (`class`))") {
+				return nil, utils.ErrorHandler(err, "Class/class teacher does not exist")
+			}
 			return nil, utils.ErrorHandler(err, "Error adding data.")
 		}
 		lastID, err := res.LastInsertId()
