@@ -50,3 +50,5 @@ subject varchar(255) not null,
 Index (email)
 ) auto_increment=100;
 */
+
+// You can only create a foreign key on a column that has an index on it.
