@@ -323,3 +323,51 @@ func DeleteTeachersDB(ids []int) ([]int, error) {
 	}
 	return deletedIds, nil
 }
+
+func GetStudentsByTeacherIdFromDb(teacherId string, students []models.Student) ([]models.Student, error) {
+	db, err := ConnectDb()
+	if err != nil {
+		return nil, utils.ErrorHandler(err, "Error retrieving data.")
+	}
+	defer db.Close()
+
+	query := `SELECT id, first_name, last_name, email, class FROM students where class = (SELECT class FROM teachers WHERE id = ?)`
+	rows, err := db.Query(query, teacherId)
+	if err != nil {
+		return nil, utils.ErrorHandler(err, "Error retrieving data.")
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var student models.Student
+		err := rows.Scan(&student.ID, &student.FirstName, &student.LastName, &student.Email, &student.Class)
+		if err != nil {
+			return nil, utils.ErrorHandler(err, "Error retrieving data.")
+		}
+		students = append(students, student)
+	}
+	err = rows.Err()
+	if err != nil {
+		return nil, utils.ErrorHandler(err, "Error retrieving data.")
+	}
+	return students, nil
+}
+
+func GetStudentCountByTeacherIdDb(teacherId string) (int, error) {
+	db, err := ConnectDb()
+	if err != nil {
+		return 0, utils.ErrorHandler(err, "Error retrieving count")
+	}
+	defer db.Close()
+
+	var studentCount int
+
+	query := `SELECT COUNT(*) FROM students WHERE class = (SELECT class FROM teachers WHERE id = ?)`
+
+	err = db.QueryRow(query, teacherId).Scan(&studentCount)
+	if err != nil {
+		return 0, utils.ErrorHandler(err, "Error retrieving count")
+	}
+
+	return studentCount, nil
+}
