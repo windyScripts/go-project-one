@@ -258,6 +258,30 @@ func DeleteExecDB(id int) error {
 	return nil
 }
 
+func GetUserByUsernameDb(username string) (*models.Exec, error) {
+	db, err := ConnectDb()
+	if err != nil {
+		utils.ErrorHandler(err, "internal error")
+		return nil, err
+	}
+	defer db.Close()
+
+	user := &models.Exec{}
+
+	err = db.QueryRow(`SELECT id, first_name, last_name, email, username, password, inactive_status, role FROM execs where username = ?`, username).Scan(&user.ID, &user.FirstName, &user.LastName, &user.Email, &user.Username, &user.Password, &user.InactiveStatus, &user.Role)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// http.Error(w, "User not found", http.StatusBadRequest)
+
+			return nil, utils.ErrorHandler(err, "User not found")
+		}
+
+		return nil, utils.ErrorHandler(err, "Database error.")
+	}
+	return user, nil
+}
+
 /*
 authorization examples:
 role based access control (rbac)
