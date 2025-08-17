@@ -56,7 +56,9 @@ func main() {
 
 	//secureMux := mw.Cors(rl.Middleware(mw.ReponseTimeMiddleware(mw.SecurityHeaders(mw.Compression(mw.Hpp(hppOptions)((mux)))))))
 	//secureMux := utils.ApplyMiddlewares(mux, mw.Hpp(hppOptions), mw.Compression, mw.SecurityHeaders, mw.ReponseTimeMiddleware, rl.Middleware, mw.Cors)
-	secureMux := mw.SecurityHeaders(router) // sidestepping middlewares for testing
+	jwtMiddleware := mw.MiddlewaresExcludePaths(mw.JWTMiddleware, "/execs/login")
+
+	secureMux := jwtMiddleware(mw.SecurityHeaders(router)) // sidestepping middlewares for testing
 
 	// create custom server
 	server := &http.Server{
