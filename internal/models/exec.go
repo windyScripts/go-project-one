@@ -17,6 +17,15 @@ type Exec struct {
 	Role                string         `json:"role,omitempty" db:"role,omitempty"`
 }
 
+type UpdatePasswordRequest struct {
+	CurrentPassword string `json:"current_password"`
+	NewPassword     string `json:"new_password"`
+}
+type UpdatePasswordResponse struct {
+	Token           string `json:"token"`
+	PasswordUpdated bool   `json:"password_updated"`
+}
+
 /*
 bcrypt, argon2 and pbkdf2 are hashing algos.
 bcrypt is well established. efficient enough. widely supported.
