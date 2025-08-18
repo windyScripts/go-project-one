@@ -35,10 +35,10 @@ func GetExecByID(id int) (models.Exec, error) {
 	return exec, nil
 }
 
-func GetExecsDbHandler(execs []models.Exec, r *http.Request) ([]models.Exec, error) {
+func GetExecsDbHandler(execs []models.Exec, r *http.Request, page, limit int) ([]models.Exec, int, error) {
 	db, err := ConnectDb()
 	if err != nil {
-		return nil, utils.ErrorHandler(err, "Error retrieving data.")
+		return nil, 0, utils.ErrorHandler(err, "Error retrieving data.")
 	}
 	defer db.Close()
 
@@ -47,12 +47,16 @@ func GetExecsDbHandler(execs []models.Exec, r *http.Request) ([]models.Exec, err
 
 	query, args = utils.AddFilters(r, query, args)
 
+	offset := (page - 1) * limit
+	query += " LIMIT ? OFFSET ?"
+	args = append(args, limit, offset)
+
 	query = utils.AddSorting(r, query)
 
 	rows, err := db.Query(query, args...)
 	if err != nil {
 		fmt.Println(err)
-		return nil, utils.ErrorHandler(err, "Error retrieving data.")
+		return nil, 0, utils.ErrorHandler(err, "Error retrieving data.")
 	}
 	defer rows.Close()
 
@@ -62,11 +66,19 @@ func GetExecsDbHandler(execs []models.Exec, r *http.Request) ([]models.Exec, err
 		var exec models.Exec
 		err := rows.Scan(&exec.ID, &exec.FirstName, &exec.LastName, &exec.Email, &exec.Username, &exec.UserCreatedAt, &exec.InactiveStatus, &exec.Role)
 		if err != nil {
-			return nil, utils.ErrorHandler(err, "Error retrieving data.")
+			return nil, 0, utils.ErrorHandler(err, "Error retrieving data.")
 		}
 		execs = append(execs, exec)
 	}
-	return execs, nil
+
+	var execCount int
+
+	err = db.QueryRow("SELECT COUNT(*) FROM execs").Scan(&execCount)
+	if err != nil {
+		execCount = 0
+	}
+
+	return execs, execCount, nil
 }
 
 func AddExecsDbHandler(newExecs []models.Exec) ([]models.Exec, error) {
@@ -380,15 +392,15 @@ func ForgotPasswordDbHandler(email string) error {
 }
 
 func ResetPasswordDbHandler(token, newPassword string) error {
-	
+
 	bytes, err := hex.DecodeString(token)
 	if err != nil {
 		return utils.ErrorHandler(err, "Internal Error")
 	}
-	
+
 	hashedToken := sha256.Sum256(bytes)
 	hashedTokenString := hex.EncodeToString(hashedToken[:])
-	
+
 	db, err := ConnectDb()
 	if err != nil {
 		return utils.ErrorHandler(err, "Internal Error")

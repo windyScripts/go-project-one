@@ -38,20 +38,27 @@ func GetExecHandler(w http.ResponseWriter, r *http.Request) {
 func GetExecsHandler(w http.ResponseWriter, r *http.Request) {
 
 	var execs []models.Exec
-	execs, err := sqlconnect.GetExecsDbHandler(execs, r)
+
+	page, limit := utils.GetPaginationParams(r)
+
+	execs, execCount, err := sqlconnect.GetExecsDbHandler(execs, r, page, limit)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	response := struct {
-		Status string        `json:"status"`
-		Count  int           `json:"count"`
-		Data   []models.Exec `json:"data"`
+		Status    string        `json:"status"`
+		Count     int           `json:"count"`
+		Page      int           `json:"page"`
+		Pagecount int           `json:"page_limit"`
+		Data      []models.Exec `json:"data"`
 	}{
-		Status: "success",
-		Count:  len(execs),
-		Data:   execs,
+		Status:    "success",
+		Count:     execCount,
+		Page:      page,
+		Pagecount: limit,
+		Data:      execs,
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -372,11 +379,11 @@ func ForgotPasswordHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Password reset link sent to %s", req.Email)
 }
 
-func ResetPasswordHandler(w http.ResponseWriter, r *http.Request){
+func ResetPasswordHandler(w http.ResponseWriter, r *http.Request) {
 	token := r.PathValue("resetcode")
 
 	type request struct {
-		NewPassword string `json:"new_password"`
+		NewPassword     string `json:"new_password"`
 		ConfirmPassword string `json:"confirm_password"`
 	}
 
@@ -394,10 +401,9 @@ func ResetPasswordHandler(w http.ResponseWriter, r *http.Request){
 
 	if req.NewPassword != req.ConfirmPassword {
 		http.Error(w, "passwords should match", http.StatusBadRequest)
-		return		
+		return
 	}
-	
-	
+
 	err = sqlconnect.ResetPasswordDbHandler(token, req.NewPassword)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)

@@ -58,7 +58,6 @@ func main() {
 	//secureMux := utils.ApplyMiddlewares(mux, mw.Hpp(hppOptions), mw.Compression, mw.SecurityHeaders, mw.ReponseTimeMiddleware, rl.Middleware, mw.Cors)
 	jwtMiddleware := mw.MiddlewaresExcludePaths(mw.JWTMiddleware, "/execs/login", "/execs/forgotpassword", "/execs/resetpassword/reset")
 
-
 	secureMux := jwtMiddleware(mw.SecurityHeaders(router)) // sidestepping middlewares for testing
 
 	// create custom server
