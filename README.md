@@ -24,3 +24,11 @@ execs:
 Generate cert.pem and key.pem using:
 
 openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 365 -nodes
+
+For generating from openssl.cnf file:
+
+openssl req -x509 -newkey rsa:2048 -nodes \
+  -keyout key.pem \
+  -out cert.pem \
+  -days 365 \
+  -config openssl.cnf
