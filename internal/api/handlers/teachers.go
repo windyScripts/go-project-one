@@ -292,6 +292,12 @@ func GetStudentsByTeacherId(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetStudentCountByTeacherId(w http.ResponseWriter, r *http.Request) {
+	// admin, manager and exec should be able to access this.
+	_, err := utils.AuthorizeUser(r.Context().Value(utils.ContextKey("role")).(string), "admin", "manager", "exec")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	teacherId := r.PathValue("id")
 
 	studentCount, err := sqlconnect.GetStudentCountByTeacherIdDb(teacherId)
