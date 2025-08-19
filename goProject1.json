@@ -1,0 +1,853 @@
+{
+	"info": {
+		"_postman_id": "a817017a-4c62-495a-946b-51da3a9da03c",
+		"name": "G P",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40972967"
+	},
+	"item": [
+		{
+			"name": "Root",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Students",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:3001/students",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"students"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Teachers",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\":\"John\",\n    \"age\":\"31\",\n    \"city\":\"London\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/teachers/?sortby=last_name:desc",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"teachers",
+						""
+					],
+					"query": [
+						{
+							"key": "first_name",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "last_name",
+							"value": "Jack",
+							"disabled": true
+						},
+						{
+							"key": "email",
+							"value": "jack@example.com",
+							"disabled": true
+						},
+						{
+							"key": "sortby",
+							"value": "last_name:desc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Execs",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/execs",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"execs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "addTeachers",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n{\n    \"first_name\":\"Atlas\",\n    \"last_name\":\"Shrugger\",\n    \"email\":\"ashrugger@example.com\",\n    \"class\":\"9C\",\n    \"subject\":\"Fiction\"\n}\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/teachers",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"teachers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/items/create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"items",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "teachers",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n            \"id\": 101,\n            \"first_name\": \"Alanwe\",\n            \"last_name\": \"Jason\",\n            \"email\": \"jjason@example.com\",\n            \"class\": \"7B\",\n            \"subject\": \"Math\"\n        }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/teachers/101",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"teachers",
+						"101"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\":\"alanwe@eso.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/teachers/101",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"teachers",
+						"101"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/teachers/102",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"teachers",
+						"102"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "patch teachers",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n    {\n        \"id\": \"100\",\n        \"first_name\": \"Derrick\"\n    }\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/teachers/",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"teachers",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete teachers",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n103, 104\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/teachers/",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"teachers",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "students",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n{\n    \"first_name\":\"Namor\",\n    \"last_name\":\"Prince\",\n    \"email\":\"pnamor@example.com\",\n    \"class\":\"9C\"\n}\n]"
+				},
+				"url": {
+					"raw": "{{baseURL}}/students",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"students"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "students",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n{\n    \"first_name\":\"Namor\",\n    \"last_name\":\"Prince\",\n    \"email\":\"pnamor@example.com\",\n    \"class\":\"9C\"\n}\n]"
+				},
+				"url": {
+					"raw": "{{baseURL}}/students?limit=1",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"students"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "student",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/teachers/100",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"teachers",
+						"100"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "student",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"first_name\": \"Frodo\",\n    \"last_name\": \"Lotr\",\n    \"email\": \"lfrodo@example.com\",\n    \"class\": \"9C\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/students/102",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"students",
+						"102"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "students",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n    {\n    \"id\":\"103\",\n    \"email\": \"laragornb@lotr.com\"\n}\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/students",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"students"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "student",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/students/104",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"students",
+						"104"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "classStudents",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "classStudentCount",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "execs",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/execs",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"execs"
+					],
+					"query": [
+						{
+							"key": "first_name",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "last_name",
+							"value": "Jack",
+							"disabled": true
+						},
+						{
+							"key": "email",
+							"value": "jack@example.com",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "execs",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n    {\n        \"first_name\": \"Dumble\",\n        \"last_name\": \"Dore\",\n        \"email\": \"ddoree@example.com\",\n        \"username\": \"dumbledore\",\n        \"role\": \"admin\"\n    },\n    {\n        \"first_name\": \"Douglas\",\n        \"last_name\": \"Adams\",\n        \"email\": \"justhiker@example.com\",\n        \"username\": \"solongfish\",\n        \"role\": \"exec\"\n    }\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/execs",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"execs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "patchteacher",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"justhiker@example.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/execs/2",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"execs",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "patchTeachers",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n{\n    \"first_name\":\"Dumble\",\n    \"last_name\":\"Dore\",\n    \"email\":\"ddumble@example.com\",\n    \"username\":\"dumbledore\",\n    \"password\":\"securepassword1\",\n    \"role\":\"admin\"\n}\n]"
+				},
+				"url": {
+					"raw": "{{baseURL}}/execs",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"execs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getExec",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"justhiker@example.com\"\n}"
+				},
+				"url": {
+					"raw": "{{baseURL}}/execs/2",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"execs",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deleteExec",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"justhiker@example.com\"\n}"
+				},
+				"url": {
+					"raw": "{{baseURL}}/execs/3",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"execs",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\":\"dumbledore\",\n    \"password\":\"securepassword1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/execs/login",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"execs",
+						"login"
+					],
+					"query": [
+						{
+							"key": "first_name",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "last_name",
+							"value": "Jack",
+							"disabled": true
+						},
+						{
+							"key": "email",
+							"value": "jack@example.com",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "logout",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\":\"dumbledore\",\n    \"password\":\"securepassword1\"\n}"
+				},
+				"url": {
+					"raw": "{{baseURL}}/execs/logout",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"execs",
+						"logout"
+					],
+					"query": [
+						{
+							"key": "first_name",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "last_name",
+							"value": "Jack",
+							"disabled": true
+						},
+						{
+							"key": "email",
+							"value": "jack@example.com",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updatePassword",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"current_password\":\"securepassword\",\n    \"new_password\":\"securepassword1\"\n}"
+				},
+				"url": {
+					"raw": "{{baseURL}}/execs/4/updatepassword",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"execs",
+						"4",
+						"updatepassword"
+					],
+					"query": [
+						{
+							"key": "first_name",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "last_name",
+							"value": "Jack",
+							"disabled": true
+						},
+						{
+							"key": "email",
+							"value": "jack@example.com",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "forgotPassword",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\":\"ddoree@example.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/execs/forgotpassword",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"execs",
+						"forgotpassword"
+					],
+					"query": [
+						{
+							"key": "first_name",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "last_name",
+							"value": "Jack",
+							"disabled": true
+						},
+						{
+							"key": "email",
+							"value": "jack@example.com",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "resetpassword",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"new_password\":\"securepassword\",\n    \"confirm_password\":\"securepassword\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/execs/resetpassword/reset/3873df526dd46a172ad4f7fa6e55c55e70c5addb311800d0a811fcd764f0e25d",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"execs",
+						"resetpassword",
+						"reset",
+						"3873df526dd46a172ad4f7fa6e55c55e70c5addb311800d0a811fcd764f0e25d"
+					],
+					"query": [
+						{
+							"key": "first_name",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "last_name",
+							"value": "Jack",
+							"disabled": true
+						},
+						{
+							"key": "email",
+							"value": "jack@example.com",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "https://localhost:3000",
+			"type": "default"
+		}
+	]
+}
