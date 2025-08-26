@@ -144,7 +144,7 @@ drop table my_table
 drop database test_database
 */
 
-/* 
+/*
 go build -o binaries/rest_api cmd/api/server.go
 Binary file only runs on same os and cpu architecture as the source computer
 

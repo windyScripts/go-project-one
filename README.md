@@ -1,25 +1,4 @@
-execs:
-
-[
-    {
-        "first_name": "Dumble",
-        "last_name": "Dore",
-        "email": "ddoree@example.com",
-        "username": "dumbledore",
-        "role": "admin",
-        "password": "securepassword1"
-    },
-    {
-        "first_name": "Douglas",
-        "last_name": "Adams",
-        "email": "justhiker@example.com",
-        "username": "solongfish",
-        "role": "exec",
-        "password": "securepassword2"
-    }
-]
-
----
+## Admin dashboard
 
 Generate cert.pem and key.pem using:
 
@@ -32,3 +11,29 @@ openssl req -x509 -newkey rsa:2048 -nodes \
   -out cert.pem \
   -days 365 \
   -config openssl.cnf
+
+  `mailhog` for running mailhog server in terminal after installing with homebrew.
+
+run project with go run ./cmd/api
+
+MIddleware implemented within this project:
+
+Compression
+
+CORS
+
+HPP
+
+JWT
+
+Rate Limiter
+
+Response Time
+
+Data Sanitization
+
+Security Headers
+
+Levels of Authority within Institute:
+Student, Teacher, Admin, Manager, Director
+

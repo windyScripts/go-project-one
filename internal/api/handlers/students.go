@@ -13,6 +13,11 @@ import (
 )
 
 func GetStudentHandler(w http.ResponseWriter, r *http.Request) {
+	_, err := utils.AuthorizeUser(r.Context().Value(utils.ContextKey("role")).(string), "teacher", "admin", "manager", "director")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
 	idStr := r.PathValue("id")
 
@@ -35,6 +40,11 @@ func GetStudentHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetStudentsHandler(w http.ResponseWriter, r *http.Request) {
+	_, err := utils.AuthorizeUser(r.Context().Value(utils.ContextKey("role")).(string), "teacher", "admin", "manager", "director")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
 	var students []models.Student
 
@@ -66,6 +76,11 @@ func GetStudentsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func AddStudentHandler(w http.ResponseWriter, r *http.Request) {
+	_, err := utils.AuthorizeUser(r.Context().Value(utils.ContextKey("role")).(string), "admin", "manager", "director")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
 	var newStudents []models.Student
 	var rawStudents []map[string]interface{}
@@ -139,6 +154,11 @@ func AddStudentHandler(w http.ResponseWriter, r *http.Request) {
 
 // PUT /students/{id}
 func UpdateStudentHandler(w http.ResponseWriter, r *http.Request) {
+	_, err := utils.AuthorizeUser(r.Context().Value(utils.ContextKey("role")).(string), "admin", "manager", "director")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	idStr := r.PathValue("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -168,6 +188,11 @@ func UpdateStudentHandler(w http.ResponseWriter, r *http.Request) {
 
 // PATCH /students/{id}
 func PatchStudentHandler(w http.ResponseWriter, r *http.Request) {
+	_, err := utils.AuthorizeUser(r.Context().Value(utils.ContextKey("role")).(string), "admin", "manager", "director")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	idStr := r.PathValue("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -196,9 +221,14 @@ func PatchStudentHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func PatchStudentsHandler(w http.ResponseWriter, r *http.Request) {
+	_, err := utils.AuthorizeUser(r.Context().Value(utils.ContextKey("role")).(string), "admin", "manager", "director")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
 	var updates []map[string]interface{}
-	err := json.NewDecoder(r.Body).Decode(&updates)
+	err = json.NewDecoder(r.Body).Decode(&updates)
 	if err != nil {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
@@ -214,6 +244,11 @@ func PatchStudentsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteStudentHandler(w http.ResponseWriter, r *http.Request) {
+	_, err := utils.AuthorizeUser(r.Context().Value(utils.ContextKey("role")).(string), "manager", "director")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	idStr := r.PathValue("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -242,9 +277,14 @@ func DeleteStudentHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteStudentsHandler(w http.ResponseWriter, r *http.Request) {
+	_, err := utils.AuthorizeUser(r.Context().Value(utils.ContextKey("role")).(string), "manager", "director")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
 	var ids []int
-	err := json.NewDecoder(r.Body).Decode(&ids)
+	err = json.NewDecoder(r.Body).Decode(&ids)
 	if err != nil {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return

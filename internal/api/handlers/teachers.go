@@ -14,6 +14,12 @@ import (
 
 func GetTeacherHandler(w http.ResponseWriter, r *http.Request) {
 
+	_, err := utils.AuthorizeUser(r.Context().Value(utils.ContextKey("role")).(string), "teacher", "admin", "manager", "director")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
 	idStr := r.PathValue("id")
 
 	// Handle path param
@@ -35,6 +41,11 @@ func GetTeacherHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetTeachersHandler(w http.ResponseWriter, r *http.Request) {
+	_, err := utils.AuthorizeUser(r.Context().Value(utils.ContextKey("role")).(string), "teacher", "admin", "manager", "director")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
 	var teachers []models.Teacher
 
@@ -66,6 +77,12 @@ func GetTeachersHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func AddTeacherHandler(w http.ResponseWriter, r *http.Request) {
+
+	_, err := utils.AuthorizeUser(r.Context().Value(utils.ContextKey("role")).(string), "admin", "manager", "director")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
 	var newTeachers []models.Teacher
 	var rawTeachers []map[string]interface{}
@@ -138,6 +155,13 @@ func AddTeacherHandler(w http.ResponseWriter, r *http.Request) {
 
 // PUT /teachers/{id}
 func UpdateTeacherHandler(w http.ResponseWriter, r *http.Request) {
+
+	_, err := utils.AuthorizeUser(r.Context().Value(utils.ContextKey("role")).(string), "director")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
 	idStr := r.PathValue("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -167,6 +191,12 @@ func UpdateTeacherHandler(w http.ResponseWriter, r *http.Request) {
 
 // PATCH /teachers/{id}
 func PatchTeacherHandler(w http.ResponseWriter, r *http.Request) {
+
+	_, err := utils.AuthorizeUser(r.Context().Value(utils.ContextKey("role")).(string), "manager", "director")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	idStr := r.PathValue("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -196,8 +226,14 @@ func PatchTeacherHandler(w http.ResponseWriter, r *http.Request) {
 
 func PatchTeachersHandler(w http.ResponseWriter, r *http.Request) {
 
+	_, err := utils.AuthorizeUser(r.Context().Value(utils.ContextKey("role")).(string), "manager", "director")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
 	var updates []map[string]interface{}
-	err := json.NewDecoder(r.Body).Decode(&updates)
+	err = json.NewDecoder(r.Body).Decode(&updates)
 	if err != nil {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
@@ -213,6 +249,11 @@ func PatchTeachersHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteTeacherHandler(w http.ResponseWriter, r *http.Request) {
+	_, err := utils.AuthorizeUser(r.Context().Value(utils.ContextKey("role")).(string), "manager", "director")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	idStr := r.PathValue("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -241,9 +282,13 @@ func DeleteTeacherHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteTeachersHandler(w http.ResponseWriter, r *http.Request) {
-
+	_, err := utils.AuthorizeUser(r.Context().Value(utils.ContextKey("role")).(string), "manager", "director")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	var ids []int
-	err := json.NewDecoder(r.Body).Decode(&ids)
+	err = json.NewDecoder(r.Body).Decode(&ids)
 	if err != nil {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
@@ -267,11 +312,16 @@ func DeleteTeachersHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetStudentsByTeacherId(w http.ResponseWriter, r *http.Request) {
+	_, err := utils.AuthorizeUser(r.Context().Value(utils.ContextKey("role")).(string), "admin", "manager", "director")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	teacherId := r.PathValue("id")
 
 	var students []models.Student
 
-	students, err := sqlconnect.GetStudentsByTeacherIdFromDb(teacherId, students)
+	students, err = sqlconnect.GetStudentsByTeacherIdFromDb(teacherId, students)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -293,7 +343,7 @@ func GetStudentsByTeacherId(w http.ResponseWriter, r *http.Request) {
 
 func GetStudentCountByTeacherId(w http.ResponseWriter, r *http.Request) {
 	// admin, manager and exec should be able to access this.
-	_, err := utils.AuthorizeUser(r.Context().Value(utils.ContextKey("role")).(string), "admin", "manager", "exec")
+	_, err := utils.AuthorizeUser(r.Context().Value(utils.ContextKey("role")).(string), "admin", "manager", "owner")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

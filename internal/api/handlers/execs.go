@@ -15,6 +15,12 @@ import (
 
 func GetExecHandler(w http.ResponseWriter, r *http.Request) {
 
+	_, err := utils.AuthorizeUser(r.Context().Value(utils.ContextKey("role")).(string),"admin", "manager", "director")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
 	idStr := r.PathValue("id")
 
 	// Handle path param
@@ -36,6 +42,12 @@ func GetExecHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetExecsHandler(w http.ResponseWriter, r *http.Request) {
+
+	_, err := utils.AuthorizeUser(r.Context().Value(utils.ContextKey("role")).(string),"admin", "manager", "director")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
 	var execs []models.Exec
 
@@ -67,6 +79,12 @@ func GetExecsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func AddExecHandler(w http.ResponseWriter, r *http.Request) {
+
+	_, err := utils.AuthorizeUser(r.Context().Value(utils.ContextKey("role")).(string), "manager", "director")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}	
 
 	var newExecs []models.Exec
 	var rawExecs []map[string]interface{}
@@ -140,6 +158,13 @@ func AddExecHandler(w http.ResponseWriter, r *http.Request) {
 
 // PATCH /execs/{id}
 func PatchExecHandler(w http.ResponseWriter, r *http.Request) {
+
+	_, err := utils.AuthorizeUser(r.Context().Value(utils.ContextKey("role")).(string), "director")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}		
+
 	idStr := r.PathValue("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -169,8 +194,14 @@ func PatchExecHandler(w http.ResponseWriter, r *http.Request) {
 
 func PatchExecsHandler(w http.ResponseWriter, r *http.Request) {
 
+	_, err := utils.AuthorizeUser(r.Context().Value(utils.ContextKey("role")).(string), "director")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}		
+
 	var updates []map[string]interface{}
-	err := json.NewDecoder(r.Body).Decode(&updates)
+	err = json.NewDecoder(r.Body).Decode(&updates)
 	if err != nil {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
@@ -186,6 +217,13 @@ func PatchExecsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteExecHandler(w http.ResponseWriter, r *http.Request) {
+
+	_, err := utils.AuthorizeUser(r.Context().Value(utils.ContextKey("role")).(string), "director")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}		
+
 	idStr := r.PathValue("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
